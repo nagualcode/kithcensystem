@@ -131,6 +131,128 @@ A React interface is planned for user interactions, allowing users to:
 - Check kitchen order status.
 - Simulate payment status changes.
 
+## Testing
+
+
+### 1. **Create a User (UserService)**
+Use the following command to create a new user in the UserService.
+
+```bash
+curl -X POST http://localhost:8081/users \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "John Doe",
+  "email": "john.doe@example.com"
+}'
+```
+
+### 2. **Create a Menu Item (MenuService)**
+To create a menu item, run this command:
+
+```bash
+curl -X POST http://localhost:8083/menu \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Pizza Margherita",
+  "price": 12.99
+}'
+```
+
+### 3. **Create an Order (OrderService)**
+Once you have a user and a menu item, create an order associated with that user.
+
+```bash
+curl -X POST http://localhost:8084/orders \
+-H "Content-Type: application/json" \
+-d '{
+  "userId": 1,
+  "items": [
+    {
+      "menuItemId": 1,
+      "quantity": 2
+    }
+  ]
+}'
+```
+
+### 4. **Check the Order Status (OrderService)**
+You can check the order status by running this command:
+
+```bash
+curl -X GET http://localhost:8084/orders/1 \
+-H "Content-Type: application/json"
+```
+
+### 5. **Simulate Payment (PaymentService)**
+To simulate a payment, change the order status to `paid` using the PaymentService:
+
+```bash
+curl -X POST http://localhost:8082/payments \
+-H "Content-Type: application/json" \
+-d '{
+  "orderId": 1,
+  "status": "paid"
+}'
+```
+
+### 6. **Check the Payment Status (PaymentService)**
+Check the payment status of an order:
+
+```bash
+curl -X GET http://localhost:8082/payments/1 \
+-H "Content-Type: application/json"
+```
+
+### 7. **Update Payment Status to Unpaid (PaymentService)**
+If needed, you can update the payment status back to `unpaid`:
+
+```bash
+curl -X POST http://localhost:8082/payments \
+-H "Content-Type: application/json" \
+-d '{
+  "orderId": 1,
+  "status": "unpaid"
+}'
+```
+
+### 8. **Send Order to Kitchen (KitchenService)**
+Once the order is paid, the kitchen can start preparing it:
+
+```bash
+curl -X POST http://localhost:8085/kitchen/orders \
+-H "Content-Type: application/json" \
+-d '{
+  "orderId": 1,
+  "status": "in_progress"
+}'
+```
+
+### 9. **Check Kitchen Order Status (KitchenService)**
+To check the status of the order in the kitchen:
+
+```bash
+curl -X GET http://localhost:8085/kitchen/orders/1 \
+-H "Content-Type: application/json"
+```
+
+### 10. **Complete Kitchen Order (KitchenService)**
+To simulate that the kitchen has completed preparing the order:
+
+```bash
+curl -X POST http://localhost:8085/kitchen/orders \
+-H "Content-Type: application/json" \
+-d '{
+  "orderId": 1,
+  "status": "completed"
+}'
+```
+
+### 11. **Check Eureka Service Status**
+You can check the registered services on Eureka by visiting the following URL in a browser:
+```bash
+http://localhost:8761
+```
+
 ## Contribution
 Feel free to fork this repository, open issues, and submit pull requests. Contributions are welcome!
 
