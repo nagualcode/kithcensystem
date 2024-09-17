@@ -6,6 +6,16 @@ services:
     networks:
       - spring-boot-network
 
+  migrationservice:
+    build: ./migrationservice
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
+    depends_on:
+      - postgres
+    networks:
+      - spring-boot-network
+
   userservice:
     build: ./userservice
     ports:
@@ -19,6 +29,7 @@ services:
       - eureka-server
       - postgres
       - rabbitmq
+      - migrationservice
     networks:
       - spring-boot-network
 
@@ -35,6 +46,7 @@ services:
       - eureka-server
       - postgres
       - rabbitmq
+      - migrationservice
     networks:
       - spring-boot-network
 
@@ -51,6 +63,7 @@ services:
       - eureka-server
       - postgres
       - rabbitmq
+      - migrationservice
     networks:
       - spring-boot-network
 
@@ -63,6 +76,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
+      - migrationservice
     networks:
       - spring-boot-network
 
@@ -79,6 +93,7 @@ services:
       - eureka-server
       - postgres
       - rabbitmq
+      - migrationservice
     networks:
       - spring-boot-network
 
