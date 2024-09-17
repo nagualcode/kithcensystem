@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.test.context.ActiveProfiles;
+
 
 @SpringBootTest
 @Testcontainers
+@ActiveProfiles("test")
 public class OrderServiceTest {
 
     // PostgreSQL container for the database

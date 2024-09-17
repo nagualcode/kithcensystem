@@ -14,9 +14,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.test.context.ActiveProfiles;
+
 
 @SpringBootTest
 @Testcontainers
+@ActiveProfiles("test")
+
 public class PlateServiceTest {
 
     @Container

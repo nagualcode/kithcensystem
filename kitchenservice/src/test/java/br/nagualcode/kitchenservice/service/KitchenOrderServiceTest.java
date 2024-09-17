@@ -13,9 +13,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.test.context.ActiveProfiles;
 
-@Testcontainers
+
 @SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
 public class KitchenOrderServiceTest {
 
     @Autowired
