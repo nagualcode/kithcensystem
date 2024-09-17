@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: menuservice # Replace with the actual service name like userservice, paymentservice, etc.
+  datasource:
+    url: jdbc:postgresql://postgres:5432/test_db
+    username: postgres
+    password: password
+
+rabbitmq:
+  host: rabbitmq
+  port: 5672
+  username: guest
+  password: guest
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

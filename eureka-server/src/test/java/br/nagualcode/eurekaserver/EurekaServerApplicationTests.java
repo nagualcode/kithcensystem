@@ -1,4 +1,4 @@
-package br.nagualcode.eureka_server;
+package br.nagualcode.eurekaserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
