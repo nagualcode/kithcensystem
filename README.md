@@ -252,6 +252,45 @@ You can check the registered services on Eureka by visiting the following URL in
 ```bash
 http://localhost:8761
 ```
+## Database Management with Flyway Docker
+
+In this project, we utilize **Flyway Docker** to handle database migrations. This approach simplifies the migration process by using a dedicated Flyway container that runs the SQL scripts automatically during the startup of the Docker Compose environment.
+
+### Database Structure
+
+We have chosen to use a **single PostgreSQL database** for the entire project to minimize memory footprint, especially during testing and local development. Each microservice (userservice, paymentservice, kitchenservice, menuservice, and orderservice) operates within its own schema inside the same `test_db` PostgreSQL instance. This setup allows each service to maintain a logical separation of its data while sharing the same physical database.
+
+### Running Migrations
+
+The Flyway Docker image takes care of running database migrations. The SQL migration files are located in the project root (e.g., `V1__Create_All_Tables.sql`). Flyway will execute these scripts to create the necessary tables and schemas for each service.
+
+### How to Check the Database
+
+To interact with the PostgreSQL database from the command line and inspect the current state, follow these steps:
+
+1. Open a terminal and execute the following Docker Compose command to enter the `psql` shell:
+   ```bash
+   docker compose exec postgres psql -U postgres -d test_db
+   ```
+
+2. Once inside the `psql` shell, you can list the available schemas with:
+   ```sql
+   \dn
+   ```
+
+   This will display all schemas used by the microservices, such as `kitchenservice`, `userservice`, `paymentservice`, `orderservice`, and `menuservice`.
+
+3. To list all tables in a specific schema, you can use the following command (replace `<schema_name>` with the actual schema name):
+   ```sql
+   \dt <schema_name>.*
+   ```
+
+For example, to see the tables in the `kitchenservice` schema:
+```sql
+\dt kitchenservice.*
+```
+
+
 
 ## Contribution
 Feel free to fork this repository, open issues, and submit pull requests. Contributions are welcome!
