@@ -15,22 +15,35 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+    // Update the payment status (either 'paid' or 'unpaid') for a specific orderId
     @PutMapping("/{orderId}")
     public ResponseEntity<Payment> updatePaymentStatus(
             @PathVariable Long orderId,
             @RequestParam String status) {
 
+        // Validate the status, it should only be 'paid' or 'unpaid'
         if (!status.equals("paid") && !status.equals("unpaid")) {
             return ResponseEntity.badRequest().build();
         }
 
+        // Update the payment status in the PaymentService
         Payment payment = paymentService.updatePaymentStatus(orderId, status);
-        return ResponseEntity.ok(payment);
+
+        // Return the updated payment or handle if the payment was not found
+        if (payment != null) {
+            return ResponseEntity.ok(payment);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    // Retrieve the payment information for a specific orderId
     @GetMapping("/{orderId}")
     public ResponseEntity<Payment> getPayment(@PathVariable Long orderId) {
+        // Use the service to fetch the payment by orderId
         Optional<Payment> payment = paymentService.getPayment(orderId);
+
+        // Return the payment if found, or respond with a 404 if not found
         return payment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

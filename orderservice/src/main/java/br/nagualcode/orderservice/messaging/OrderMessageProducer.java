@@ -21,7 +21,11 @@ public class OrderMessageProducer {
     }
 
     public void sendOrderStatus(Order order) {
-        String message = String.format("Order %d status: %s", order.getId(), order.getStatus());
+        // Message object for RabbitMQ to include all necessary order details
+        String message = String.format(
+            "Order ID: %d, Status: %s, Customer: %s, Email: %s, Total: %.2f",
+            order.getId(), order.getStatus(), order.getCustomerName(), order.getCustomerEmail(), order.getTotalPrice()
+        );
         rabbitTemplate.convertAndSend(RabbitMQConfig.ORDER_EXCHANGE, RabbitMQConfig.ORDER_ROUTING_KEY, message);
         logger.info("Sent message to RabbitMQ: {}", message);
     }

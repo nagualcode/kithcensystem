@@ -19,9 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.test.context.ActiveProfiles;
-
-
-
+import org.springframework.http.MediaType;
 
 
 @SpringJUnitConfig
@@ -53,6 +51,12 @@ public class PaymentControllerTest {
     @BeforeEach
     public void setup() {
         paymentRepository.deleteAll();
+        
+        // Setup initial payment record for testing
+        Payment payment = new Payment();
+        payment.setOrderId(1L);
+        payment.setStatus("unpaid");
+        paymentRepository.save(payment);
     }
 
     @Test

@@ -134,7 +134,7 @@ A React interface is planned for user interactions, allowing users to:
 ## Testing
 
 
-### 1. **Create a User (UserService)**
+### 1. **UserService**
 Use the following command to create a new user in the UserService.
 
 ```bash
@@ -146,41 +146,82 @@ curl -X POST http://localhost:8081/users \
 }'
 ```
 
-### 2. **Create a Menu Item (MenuService)**
-To create a menu item, run this command:
+### 2. **MenuService**
+To interact with the `PlateController` using `curl`, you can perform the following HTTP requests based on the available endpoints:
 
+### 1. **GET all plates** (`GET /plates`)
 ```bash
-curl -X POST http://localhost:8083/menu \
--H "Content-Type: application/json" \
--d '{
-  "name": "Pizza Margherita",
-  "price": 12.99
-}'
+curl -X GET http://localhost:8084/plates
 ```
 
-### 3. **Create an Order (OrderService)**
-Once you have a user and a menu item, create an order associated with that user.
-
+### 2. **GET a specific plate by ID** (`GET /plates/{id}`)
+Replace `{id}` with the plate ID.
 ```bash
-curl -X POST http://localhost:8084/orders \
--H "Content-Type: application/json" \
--d '{
-  "userId": 1,
-  "items": [
-    {
-      "menuItemId": 1,
-      "quantity": 2
-    }
-  ]
-}'
+curl -X GET http://localhost:8084/plates/1
 ```
 
-### 4. **Check the Order Status (OrderService)**
-You can check the order status by running this command:
-
+### 3. **POST (create) a new plate** (`POST /plates`)
 ```bash
-curl -X GET http://localhost:8084/orders/1 \
--H "Content-Type: application/json"
+curl -X POST http://localhost:8084/plates \
+     -H "Content-Type: application/json" \
+     -d '{
+           "description": "Spaghetti Bolognese",
+           "price": 12.99
+         }'
+```
+
+### 4. **PUT (update) a plate** (`PUT /plates/{id}`)
+Replace `{id}` with the plate ID and adjust the payload accordingly.
+
+
+### 3. **OrderService**
+
+
+### 1. **GET all orders** (`GET /orders`)
+```bash
+curl -X GET http://localhost:8085/orders
+```
+
+### 2. **GET a specific order by ID** (`GET /orders/{id}`)
+Replace `{id}` with the order ID.
+```bash
+curl -X GET http://localhost:8085/orders/1
+```
+
+### 3. **POST (create) a new order** (`POST /orders`)
+```bash
+curl -X POST http://localhost:8085/orders \
+     -H "Content-Type: application/json" \
+     -d '{
+           "customerName": "John Doe",
+           "customerEmail": "john.doe@example.com",
+           "status": "Pending",
+           "totalPrice": 45.99,
+           "orderItems": [
+             {
+               "plateDescription": "Spaghetti Carbonara",
+               "platePrice": 15.99
+             },
+             {
+               "plateDescription": "Pizza Margherita",
+               "platePrice": 30.00
+             }
+           ]
+         }'
+```
+
+### 4. **PUT (update) order status** (`PUT /orders/{id}/status`)
+Replace `{id}` with the order ID and specify the new `status` in the request body.
+```bash
+curl -X PUT http://localhost:8085/orders/1/status \
+     -H "Content-Type: application/json" \
+     -d '"Paid"'
+```
+
+### 5. **DELETE an order** (`DELETE /orders/{id}`)
+Replace `{id}` with the order ID to delete the specific order.
+```bash
+curl -X DELETE http://localhost:8085/orders/1
 ```
 
 ### 5. **Simulate Payment (PaymentService)**
