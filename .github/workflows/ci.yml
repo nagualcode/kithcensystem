@@ -74,6 +74,3 @@ jobs:
           cd printservice
           mvn clean install
 
-      - name: Run All Unit Tests
-        run: |
-          mvn test
