@@ -1,4 +1,6 @@
-## README.md for KitchenSystem
+## KitchenSystem
+
+![KitchenSystem Logo](logo.png)
 
 ### Overview
 
@@ -117,3 +119,8 @@ mvn test
 ```
 Tests will spin up the required Testcontainers for PostgreSQL and RabbitMQ and execute in isolated environments.
 
+---
+
+### License
+
+This is universal free-to-copy-and-use software. Feel free to share, modify, and distribute without restrictions.
