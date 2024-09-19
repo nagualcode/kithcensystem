@@ -79,7 +79,19 @@ public class OrderServiceTest {
         assertThat(rabbitTemplate.receiveAndConvert("order.queue")).isNotNull();
     }
 
+    @Test
+    void shouldUpdateOrderStatusAndSendMessageToRabbitMQ() {
+        // Create and save a new order
+        Order order = createSampleOrder();
+        Order savedOrder = orderService.createOrder(order);
 
+        // Update the order status
+        Order updatedOrder = orderService.updateOrderStatus(savedOrder.getId(), "paid");
+        assertThat(updatedOrder.getStatus()).isEqualTo("paid");
+
+        // Verify that the message was sent to RabbitMQ
+        assertThat(rabbitTemplate.receiveAndConvert("order.queue")).isNotNull();
+    }
 
     // Helper method to create a sample order
     private Order createSampleOrder() {

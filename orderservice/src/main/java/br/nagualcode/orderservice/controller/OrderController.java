@@ -32,11 +32,6 @@ public class OrderController {
                     .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/customer/{email}")
-    public List<Order> getOrdersByEmail(@PathVariable String email) {
-        return orderService.findOrdersByEmail(email);
-    }
-
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         if (order.getStatus() == null) {
@@ -59,5 +54,10 @@ public class OrderController {
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping(params = "customerEmail")
+    public List<Order> getOrdersByCustomerEmail(@RequestParam String customerEmail) {
+        return orderService.getOrdersByCustomerEmail(customerEmail);
     }
 }
