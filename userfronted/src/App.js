@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Form, Button, Table, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Table, Alert, Badge, ListGroup } from 'react-bootstrap';
 
 function App() {
   const [customerName, setCustomerName] = useState('');
@@ -59,15 +59,15 @@ function App() {
       customerEmail,
       status: 'Pending',
       orderItems: selectedPlates.map(plate => ({
-        plateDescription: plate.plateDescription,
-        platePrice: plate.platePrice
+        plateDescription: plate.description,
+        platePrice: plate.price
       }))
     };
 
     axios.post('http://localhost:8085/orders', orderData)
       .then(() => {
         setStatus('Order created successfully!');
-        setSelectedPlates([]);
+        setSelectedPlates([]); // Clear selected plates
         fetchOrders(); // Fetch updated orders list after creating an order
       })
       .catch(error => {
@@ -77,10 +77,16 @@ function App() {
   };
 
   // Handle plate selection
-  const handlePlateSelection = (plate) => {
-    if (!selectedPlates.includes(plate)) {
-      setSelectedPlates([...selectedPlates, plate]);
+  const handlePlateSelection = (e) => {
+    const plateIndex = e.target.selectedIndex - 1;
+    if (plateIndex >= 0 && !selectedPlates.includes(menuItems[plateIndex])) {
+      setSelectedPlates([...selectedPlates, menuItems[plateIndex]]);
     }
+  };
+
+  // Handle plate removal
+  const removePlate = (plate) => {
+    setSelectedPlates(selectedPlates.filter(p => p !== plate));
   };
 
   // Render the login form or the main interface based on login state
@@ -120,17 +126,30 @@ function App() {
 
             <Form.Group controlId="menuItems">
               <Form.Label>Select Plates</Form.Label>
-              <Form.Control as="select" onChange={(e) => handlePlateSelection(menuItems[e.target.selectedIndex])}>
+              <Form.Control as="select" onChange={handlePlateSelection}>
                 <option>Select a plate</option>
                 {menuItems.map((plate, index) => (
-                  <option key={index} value={plate.plateDescription}>
-                    {plate.plateDescription} - ${plate.platePrice}
+                  <option key={index} value={plate.description}>
+                    {plate.description} - ${plate.price}
                   </option>
                 ))}
               </Form.Control>
             </Form.Group>
 
-            <Button variant="success" type="submit">
+            <ListGroup className="mt-3">
+              {selectedPlates.length > 0 ? (
+                selectedPlates.map((plate, index) => (
+                  <ListGroup.Item key={index}>
+                    {plate.description} - ${plate.price} 
+                    <Button variant="danger" className="float-end" size="sm" onClick={() => removePlate(plate)}>Remove</Button>
+                  </ListGroup.Item>
+                ))
+              ) : (
+                <ListGroup.Item>No plates selected</ListGroup.Item>
+              )}
+            </ListGroup>
+
+            <Button variant="success" type="submit" className="mt-3">
               Create Order
             </Button>
           </Form>
@@ -160,7 +179,13 @@ function App() {
                       ))}
                     </td>
                     <td>${order.totalPrice}</td>
-                    <td>{order.status}</td>
+                    <td>
+                      {order.status === 'Pending' ? (
+                        <Badge bg="warning" text="dark">Pending</Badge>
+                      ) : (
+                        <Badge bg="success">Paid</Badge>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -17,44 +17,10 @@ services:
     networks:
       - spring-boot-network
 
-  userservice:
-    build: ./userservice
-    ports:
-      - "8081:8081"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
-      SPRING_RABBITMQ_HOST: rabbitmq
-    depends_on:
-      - eureka-server
-      - postgres
-      - rabbitmq
-      - flyway
-    networks:
-      - spring-boot-network
-
   paymentservice:
     build: ./paymentservice
     ports:
       - "8082:8082"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
-      SPRING_RABBITMQ_HOST: rabbitmq
-    depends_on:
-      - eureka-server
-      - postgres
-      - rabbitmq
-      - flyway
-    networks:
-      - spring-boot-network
-
-  kitchenservice:
-    build: ./kitchenservice
-    ports:
-      - "8083:8083"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
