@@ -193,18 +193,17 @@ curl -X GET http://localhost:8085/orders/1
 curl -X POST http://localhost:8085/orders \
      -H "Content-Type: application/json" \
      -d '{
-           "customerName": "John Doe",
-           "customerEmail": "john.doe@example.com",
+           "customerName": "Ana Ana",
+           "customerEmail": "fred@gmail.com",
            "status": "Pending",
-           "totalPrice": 45.99,
            "orderItems": [
              {
-               "plateDescription": "Spaghetti Carbonara",
-               "platePrice": 15.99
+               "plateDescription": "Sopa",
+               "platePrice": 45.99
              },
              {
-               "plateDescription": "Pizza Margherita",
-               "platePrice": 30.00
+               "plateDescription": "Lasanha",
+               "platePrice": 40.00
              }
            ]
          }'

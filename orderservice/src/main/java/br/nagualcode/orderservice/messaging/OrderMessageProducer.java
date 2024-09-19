@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class OrderMessageProducer {
@@ -21,12 +23,13 @@ public class OrderMessageProducer {
     }
 
     public void sendOrderStatus(Order order) {
-        // Message object for RabbitMQ to include all necessary order details
-        String message = String.format(
-            "Order ID: %d, Status: %s, Customer: %s, Email: %s, Total: %.2f",
-            order.getId(), order.getStatus(), order.getCustomerName(), order.getCustomerEmail(), order.getTotalPrice()
-        );
-        rabbitTemplate.convertAndSend(RabbitMQConfig.ORDER_EXCHANGE, RabbitMQConfig.ORDER_ROUTING_KEY, message);
-        logger.info("Sent message to RabbitMQ: {}", message);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String message = objectMapper.writeValueAsString(order); // Convert the order object to JSON
+            rabbitTemplate.convertAndSend(RabbitMQConfig.ORDER_EXCHANGE, RabbitMQConfig.ORDER_ROUTING_KEY, message);
+            logger.info("Sent JSON message to RabbitMQ: {}", message);
+        } catch (JsonProcessingException e) {
+            logger.error("Error converting order to JSON", e);
+        }
     }
 }

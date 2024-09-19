@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -36,6 +37,14 @@ public class PaymentController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+ // Retrieve all payments
+    @GetMapping
+    public ResponseEntity<List<Payment>> getAllPayments() {
+        List<Payment> payments = paymentService.getAllPayments();
+        return ResponseEntity.ok(payments);
+    }
+
 
     // Retrieve the payment information for a specific orderId
     @GetMapping("/{orderId}")

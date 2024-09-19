@@ -1,4 +1,4 @@
-package br.nagualcode.paymentservice.controller;
+package br.nagualcode.paymentservice;
 
 import br.nagualcode.paymentservice.model.Payment;
 import br.nagualcode.paymentservice.repository.PaymentRepository;
@@ -15,11 +15,14 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.http.MediaType;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 
 @SpringJUnitConfig
@@ -78,4 +81,7 @@ public class PaymentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("unpaid"));
     }
+
+
+
 }
