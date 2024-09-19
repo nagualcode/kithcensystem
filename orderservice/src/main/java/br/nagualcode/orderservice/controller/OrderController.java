@@ -32,6 +32,11 @@ public class OrderController {
                     .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/customer/{email}")
+    public List<Order> getOrdersByEmail(@PathVariable String email) {
+        return orderService.findOrdersByEmail(email);
+    }
+
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         if (order.getStatus() == null) {

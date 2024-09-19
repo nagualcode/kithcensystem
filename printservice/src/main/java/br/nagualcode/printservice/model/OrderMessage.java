@@ -1,6 +1,7 @@
 package br.nagualcode.printservice.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class OrderMessage {
 
@@ -9,6 +10,7 @@ public class OrderMessage {
     private String customer;
     private String email;
     private BigDecimal total;
+    private List<OrderItem> orderItems;  // List of order items
 
     // Getters and Setters
     public Long getOrderId() {
@@ -49,5 +51,13 @@ public class OrderMessage {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

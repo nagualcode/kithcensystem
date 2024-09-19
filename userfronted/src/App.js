@@ -23,9 +23,9 @@ function App() {
       });
   }, []);
 
-  // Fetch the list of orders based on logged-in customer
+  // Function to fetch orders for the logged-in customer by email
   const fetchOrders = () => {
-    axios.get(`http://localhost:8085/orders?customerEmail=${customerEmail}`)
+    axios.get(`http://localhost:8085/orders/customer/${customerEmail}`)
       .then(response => {
         setOrders(response.data);
       })
@@ -34,12 +34,25 @@ function App() {
       });
   };
 
+  // Polling useEffect to fetch orders every 10 seconds
+  useEffect(() => {
+    if (loggedIn) {
+      // Start polling every 10 seconds to keep the order status updated
+      const interval = setInterval(() => {
+        fetchOrders();
+      }, 10000); // 10 seconds
+
+      // Cleanup interval on component unmount
+      return () => clearInterval(interval);
+    }
+  }, [loggedIn, customerEmail]);
+
   // Handle user login
   const handleLogin = (e) => {
     e.preventDefault();
     if (customerEmail) {
       setLoggedIn(true);
-      fetchOrders();  // Fetch orders as soon as user logs in
+      fetchOrders();  // Fetch orders immediately after login
     } else {
       setError('Please enter a valid email to log in.');
     }

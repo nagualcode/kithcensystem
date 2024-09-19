@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    
+
     @Bean
-    public Queue orderUpdateQueue() {
-        return new Queue("order.update.queue", true);
+    public Queue orderPrintQueue() {
+        return new Queue("order.print.queue", true);
     }
 }
