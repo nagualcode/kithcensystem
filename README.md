@@ -85,7 +85,7 @@ The `docker-compose.yml` also ensures service dependencies and startup order. Fo
    ```
 2. Start all services using Docker Compose:
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
    This will pull required images, build the microservices, and start all services including RabbitMQ, PostgreSQL, and Eureka.
 
