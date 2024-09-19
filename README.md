@@ -1,264 +1,119 @@
-# Kitchen System Microservices Project
-
-This project simulates a kitchen order system using a microservices architecture, allowing users to place orders, manage payments, and track order status. The system is orchestrated using Docker, Docker Compose, and Eureka Server for service discovery. RabbitMQ is used for messaging, and PostgreSQL for data persistence. Each service runs in its own container.
-
-## Table of Contents
+## README.md for KitchenSystem
 
-- Architecture
-- Technologies Used
-- Services Overview
-- Setup and Installation
-- How to Run
-- API Endpoints
-- React Interface (Planned)
-- Contribution
-- License
+### Overview
 
-## Architecture
+**KitchenSystem** is a distributed microservices-based architecture built to manage the operations of a kitchen in a restaurant environment. It includes various microservices that handle customer orders, payments, menu management, and printing operations. The microservices communicate asynchronously through RabbitMQ and are orchestrated using Docker Compose for a seamless setup.
 
-The project is designed using a microservices architecture, where each service handles its own responsibilities. The services interact via Eureka for service discovery and RabbitMQ for communication.
+### Microservices
 
-### Architecture Overview:
-- **Eureka Server**: For service discovery.
-- **RabbitMQ**: Message broker between services.
-- **PostgreSQL**: Common database used by services.
-- **Docker & Docker Compose**: Containerization of all microservices.
+1. **OrderService**: Handles the creation, retrieval, and status updates of orders.
+2. **PaymentService**: Manages payments and updates the corresponding order's payment status.
+3. **MenuService**: Manages the available plates (menu items).
+4. **PrintService**: Listens to RabbitMQ for print requests and processes kitchen printing tasks.
+5. **EurekaServer**: Provides service discovery, allowing microservices to dynamically register and discover each other.
+6. **UserFronted**: React-based frontend that allows users to create orders and manage them.
 
-### Architecture Diagram
+Each service operates independently but is connected via the **Eureka Server** and **RabbitMQ**, making the system highly resilient and scalable.
 
-1. Eureka Server (service discovery)
-2. User, Payment, Kitchen, Menu, and Order services (interconnected via RabbitMQ and Eureka)
-3. PostgreSQL database
-4. React interface (to be developed for user interaction)
+### Technologies Used
 
-## Technologies Used
+- **Java 22**: The core programming language for the backend microservices.
+- **Spring Boot**: A robust framework used to create microservices.
+- **Spring Cloud Eureka**: Service registry and discovery tool.
+- **RabbitMQ**: Message broker that allows asynchronous communication between services.
+- **Spring Data JPA**: Used for data persistence with PostgreSQL.
+- **PostgreSQL**: Relational database used by multiple services, with each having its own schema.
+- **Flyway**: Handles schema migrations.
+- **Docker & Docker Compose**: Used for containerizing the microservices and orchestrating them.
+- **React**: The frontend framework used to create the user-facing component.
+- **JUnit 5 & Testcontainers**: Testing tools for ensuring robust test coverage of each microservice.
 
-- **Java 22**
-- **Spring Boot 3.3.3**
-- **Spring Cloud Eureka**
-- **RabbitMQ**
-- **PostgreSQL**
-- **Docker & Docker Compose**
-- **JUnit & Testcontainers for testing**
+### Architecture
 
-## Services Overview
+The architecture is centered on a microservices paradigm, where each service is independently developed, deployed, and scaled. The system leverages **Eureka** for service discovery, ensuring that each microservice can locate others dynamically. Communication between services is facilitated by **RabbitMQ**, which provides event-driven, asynchronous message passing.
 
-### 1. **Eureka Server**
-- Acts as a service registry, enabling dynamic discovery of services.
-- Accessible at `http://localhost:8761`.
+### Endpoints
 
-### 2. ** User Frontend **
-- Allow user to select plates and make orders
+#### OrderService
+- `POST /orders`: Create a new order.
+- `GET /orders`: Retrieve all orders.
+- `GET /orders/{id}`: Retrieve a specific order by ID.
+- `GET /orders/customer/{email}`: Retrieve all orders placed by a specific customer using their email.
+- `PUT /orders/{id}/pay`: Mark an order as "paid".
 
-### 3. **Payment Service**
-- Processes payments and manages the status of orders.
-- Allows manual toggling of payment status (paid/unpaid).
-- Runs on port `8082`.
+#### PaymentService
+- `POST /payments`: Process a payment for an order.
+- `GET /payments/{orderId}`: Retrieve the payment status of an order.
+- `PUT /payments/{orderId}/confirm`: Confirm a payment manually (useful for testing or simulation).
 
-### 5. **Menu Service**
-- Manages the restaurant’s menu items.
-- Runs on port `8084`.
+#### MenuService
+- `POST /plates`: Add a new plate (menu item) to the system.
+- `GET /plates`: Retrieve all available plates.
+- `GET /plates/{id}`: Retrieve a specific plate by its ID.
+- `DELETE /plates/{id}`: Delete a plate from the system.
 
-### 6. **Order Service**
-- Manages the lifecycle of customer orders and their statuses.
-- Interacts with the Kitchen Service for status updates.
-- Runs on port `8085`.
+#### PrintService
+- **No direct API**: The service listens to RabbitMQ for print job requests and processes them accordingly.
 
-## Setup and Installation
+#### UserFronted (React)
+- **Orders**: Users can create orders, view the menu, and track the status of their orders.
 
-### Prerequisites
-Ensure you have installed:
-- Docker
-- Docker Compose
-- Java 22
+### Orchestration with Docker Compose
 
-### Clone the Repository
-```bash
-git clone https://github.com/yourusername/kitchen-system.git
-cd kitchen-system
-```
+The system is orchestrated using Docker Compose, which manages the lifecycle of all microservices, the message broker (RabbitMQ), the PostgreSQL database, and the frontend. The services are defined in a `docker-compose.yml` file that automates the setup process, ensuring that all components can communicate via a shared network.
 
-### Build and Run with Docker Compose
-To build and run all services together using Docker Compose:
-```bash
-docker-compose up --build
-```
+#### Key Docker Components:
+1. **Eureka Server**: Exposed on port 8761, all microservices register themselves with Eureka.
+2. **RabbitMQ**: Exposed on port 5672 (message broker port) and 15672 (management UI). All microservices rely on RabbitMQ for message passing.
+3. **PostgreSQL**: The database container manages the schemas used by each microservice. A persistent volume is used to store database data.
+4. **Flyway**: Used for automatic database migrations upon startup, ensuring that each schema is correctly set up.
+5. **Microservices (OrderService, PaymentService, MenuService, PrintService)**: Each service is containerized and exposed on specific ports (e.g., 8082, 8084, etc.) and uses environment variables to connect to the database and RabbitMQ.
+6. **UserFronted (React Frontend)**: Exposed on port 3000, providing a user interface for interacting with the system.
 
-This command will:
-- Build Docker images for each microservice.
-- Start the PostgreSQL database and RabbitMQ message broker.
-- Register all services with Eureka Server.
+The `docker-compose.yml` also ensures service dependencies and startup order. For example, the `OrderService` depends on Eureka, RabbitMQ, PostgreSQL, and Flyway to be healthy before it starts, ensuring that the entire stack is properly initialized.
 
-### Access the Services
-Once the services are up, you can access the following:
+### Running the Application
 
-- **Eureka Dashboard**: `http://localhost:8761`
-- **User Service**: `http://localhost:8081`
-- **Payment Service**: `http://localhost:8082`
-- **Kitchen Service**: `http://localhost:8083`
-- **Menu Service**: `http://localhost:8084`
-- **Order Service**: `http://localhost:8085`
+#### Prerequisites:
+- **Docker** and **Docker Compose** installed on your system.
 
-## API Endpoints
-
-
-
-### Payment Service
-- **POST /payments**: Make a payment.
-- **PUT /payments/{id}**: Update payment status (paid/unpaid).
-
-
-### Menu Service
-- **POST /menu**: Add a new menu item.
-- **GET /menu**: Retrieve all menu items.
-
-### Order Service
-- **POST /orders**: Create an order.
-- **GET /orders**: Retrieve all orders.
-
-
-
-## Testing
-
-
-
-
-### 2. **MenuService**
-To interact with the `PlateController` using `curl`, you can perform the following HTTP requests based on the available endpoints:
-
-### 1. **GET all plates** (`GET /plates`)
-```bash
-curl -X GET http://localhost:8084/plates
-```
-
-### 2. **GET a specific plate by ID** (`GET /plates/{id}`)
-Replace `{id}` with the plate ID.
-```bash
-curl -X GET http://localhost:8084/plates/1
-```
-
-### 3. **POST (create) a new plate** (`POST /plates`)
-```bash
-curl -X POST http://localhost:8084/plates \
-     -H "Content-Type: application/json" \
-     -d '{
-           "description": "Spaghetti Bolognese",
-           "price": 12.99
-         }'
-```
-
-
-
-### 3. **OrderService**
-
-
-### 1. **GET all orders** (`GET /orders`)
-```bash
-curl -X GET http://localhost:8085/orders
-```
-
-### 2. **GET a specific order by ID** (`GET /orders/{id}`)
-Replace `{id}` with the order ID.
-```bash
-curl -X GET http://localhost:8085/orders/1
-```
-
-### 3. **POST (create) a new order** (`POST /orders`)
-```bash
-curl -X POST http://localhost:8085/orders \
-     -H "Content-Type: application/json" \
-     -d '{
-           "customerName": "Ana Ana",
-           "customerEmail": "fred@gmail.com",
-           "status": "Pending",
-           "orderItems": [
-             {
-               "plateDescription": "Sopa",
-               "platePrice": 45.99
-             },
-             {
-               "plateDescription": "Lasanha",
-               "platePrice": 40.00
-             }
-           ]
-         }'
-```
-
-
-
-### 5. **DELETE an order** (`DELETE /orders/{id}`)
-Replace `{id}` with the order ID to delete the specific order.
-```bash
-curl -X DELETE http://localhost:8085/orders/1
-```
-
-### 5. **PaymentService**
-To simulate a payment, change the order status to `paid` using the PaymentService:
-
-```bash
-curl -X PUT "http://localhost:8082/payments/9?status=paid"
-```
-
-### 6. **Check the Payment Status (PaymentService)**
-Check the payment status of an order:
-
-```bash
-curl -X GET http://localhost:8082/payments/1 \
--H "Content-Type: application/json"
-```
-
-
-
-
-
-
-### 11. **Check Eureka Service Status**
-You can check the registered services on Eureka by visiting the following URL in a browser:
-```bash
-http://localhost:8761
-```
-## Database Management with Flyway Docker
-
-In this project, we utilize **Flyway Docker** to handle database migrations. This approach simplifies the migration process by using a dedicated Flyway container that runs the SQL scripts automatically during the startup of the Docker Compose environment.
-
-### Database Structure
-
-We have chosen to use a **single PostgreSQL database** for the entire project to minimize memory footprint, especially during testing and local development. Each microservice (userservice, paymentservice, kitchenservice, menuservice, and orderservice) operates within its own schema inside the same `test_db` PostgreSQL instance. This setup allows each service to maintain a logical separation of its data while sharing the same physical database.
-
-### Running Migrations
-
-The Flyway Docker image takes care of running database migrations. The SQL migration files are located in the project root (e.g., `V1__Create_All_Tables.sql`). Flyway will execute these scripts to create the necessary tables and schemas for each service.
-
-### How to Check the Database
-
-To interact with the PostgreSQL database from the command line and inspect the current state, follow these steps:
-
-1. Open a terminal and execute the following Docker Compose command to enter the `psql` shell:
+#### Steps to Run:
+1. Clone the repository:
    ```bash
-   docker compose exec postgres psql -U postgres -d test_db
+   git clone https://github.com/nagualcode/kitchen-system.git
+   cd kitchen-system
+   ```
+2. Start all services using Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+   This will pull required images, build the microservices, and start all services including RabbitMQ, PostgreSQL, and Eureka.
+
+3. Verify the Eureka Server at:
+   ```
+   http://localhost:8761
    ```
 
-2. Once inside the `psql` shell, you can list the available schemas with:
-   ```sql
-   \dn
+4. Interact with the services:
+   - **OrderService**: `http://localhost:8085`
+   - **PaymentService**: `http://localhost:8082`
+   - **MenuService**: `http://localhost:8084`
+   - **UserFronted**: `http://localhost:3000`
+
+5. Access the RabbitMQ management UI at:
    ```
-
-   This will display all schemas used by the microservices, such as `kitchenservice`, `userservice`, `paymentservice`, `orderservice`, and `menuservice`.
-
-3. To list all tables in a specific schema, you can use the following command (replace `<schema_name>` with the actual schema name):
-   ```sql
-   \dt <schema_name>.*
+   http://localhost:15672
    ```
+   (Default login: `guest` / `guest`).
 
-For example, to see the tables in the `kitchenservice` schema:
-```sql
-\dt kitchenservice.*
+### Testing
+
+The project uses **JUnit** and **Testcontainers** for comprehensive unit and integration testing. The tests are defined in each microservice's test suite.
+
+#### To Run Tests:
+```bash
+cd {service_directory}
+mvn test
 ```
+Tests will spin up the required Testcontainers for PostgreSQL and RabbitMQ and execute in isolated environments.
 
-
-
-## Contribution
-Feel free to fork this repository, open issues, and submit pull requests. Contributions are welcome!
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
