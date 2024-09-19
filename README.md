@@ -227,12 +227,7 @@ curl -X DELETE http://localhost:8085/orders/1
 To simulate a payment, change the order status to `paid` using the PaymentService:
 
 ```bash
-curl -X POST http://localhost:8082/payments \
--H "Content-Type: application/json" \
--d '{
-  "orderId": 1,
-  "status": "paid"
-}'
+curl -X PUT "http://localhost:8082/payments/9?status=paid"
 ```
 
 ### 6. **Check the Payment Status (PaymentService)**
@@ -243,49 +238,10 @@ curl -X GET http://localhost:8082/payments/1 \
 -H "Content-Type: application/json"
 ```
 
-### 7. **Update Payment Status to Unpaid (PaymentService)**
-If needed, you can update the payment status back to `unpaid`:
 
-```bash
-curl -X POST http://localhost:8082/payments \
--H "Content-Type: application/json" \
--d '{
-  "orderId": 1,
-  "status": "unpaid"
-}'
-```
 
-### 8. **Send Order to Kitchen (KitchenService)**
-Once the order is paid, the kitchen can start preparing it:
 
-```bash
-curl -X POST http://localhost:8085/kitchen/orders \
--H "Content-Type: application/json" \
--d '{
-  "orderId": 1,
-  "status": "in_progress"
-}'
-```
 
-### 9. **Check Kitchen Order Status (KitchenService)**
-To check the status of the order in the kitchen:
-
-```bash
-curl -X GET http://localhost:8085/kitchen/orders/1 \
--H "Content-Type: application/json"
-```
-
-### 10. **Complete Kitchen Order (KitchenService)**
-To simulate that the kitchen has completed preparing the order:
-
-```bash
-curl -X POST http://localhost:8085/kitchen/orders \
--H "Content-Type: application/json" \
--d '{
-  "orderId": 1,
-  "status": "completed"
-}'
-```
 
 ### 11. **Check Eureka Service Status**
 You can check the registered services on Eureka by visiting the following URL in a browser:

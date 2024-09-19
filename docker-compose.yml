@@ -127,6 +127,17 @@ services:
     networks:
       - spring-boot-network
 
+  userfronted:
+    build:
+      context: ./userfronted
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - spring-boot-network
+      
 networks:
   spring-boot-network:
     driver: bridge
