@@ -47,18 +47,13 @@ The project is designed using a microservices architecture, where each service h
 - Acts as a service registry, enabling dynamic discovery of services.
 - Accessible at `http://localhost:8761`.
 
-### 2. **User Service**
-- Handles user creation and management.
-- Runs on port `8081`.
+### 2. ** User Frontend **
+- Allow user to select plates and make orders
 
 ### 3. **Payment Service**
 - Processes payments and manages the status of orders.
 - Allows manual toggling of payment status (paid/unpaid).
 - Runs on port `8082`.
-
-### 4. **Kitchen Service**
-- Manages kitchen orders and updates the order status.
-- Runs on port `8083`.
 
 ### 5. **Menu Service**
 - Manages the restaurant’s menu items.
@@ -106,16 +101,12 @@ Once the services are up, you can access the following:
 
 ## API Endpoints
 
-### User Service
-- **POST /users**: Create a new user.
-- **GET /users**: Retrieve all users.
+
 
 ### Payment Service
 - **POST /payments**: Make a payment.
 - **PUT /payments/{id}**: Update payment status (paid/unpaid).
 
-### Kitchen Service
-- **GET /kitchen/orders**: Retrieve kitchen orders.
 
 ### Menu Service
 - **POST /menu**: Add a new menu item.
@@ -125,26 +116,12 @@ Once the services are up, you can access the following:
 - **POST /orders**: Create an order.
 - **GET /orders**: Retrieve all orders.
 
-## React Interface (Planned)
-A React interface is planned for user interactions, allowing users to:
-- Create and manage orders.
-- Check kitchen order status.
-- Simulate payment status changes.
+
 
 ## Testing
 
 
-### 1. **UserService**
-Use the following command to create a new user in the UserService.
 
-```bash
-curl -X POST http://localhost:8081/users \
--H "Content-Type: application/json" \
--d '{
-  "name": "John Doe",
-  "email": "john.doe@example.com"
-}'
-```
 
 ### 2. **MenuService**
 To interact with the `PlateController` using `curl`, you can perform the following HTTP requests based on the available endpoints:
@@ -170,8 +147,6 @@ curl -X POST http://localhost:8084/plates \
          }'
 ```
 
-### 4. **PUT (update) a plate** (`PUT /plates/{id}`)
-Replace `{id}` with the plate ID and adjust the payload accordingly.
 
 
 ### 3. **OrderService**
@@ -209,13 +184,7 @@ curl -X POST http://localhost:8085/orders \
          }'
 ```
 
-### 4. **PUT (update) order status** (`PUT /orders/{id}/status`)
-Replace `{id}` with the order ID and specify the new `status` in the request body.
-```bash
-curl -X PUT http://localhost:8085/orders/1/status \
-     -H "Content-Type: application/json" \
-     -d '"Paid"'
-```
+
 
 ### 5. **DELETE an order** (`DELETE /orders/{id}`)
 Replace `{id}` with the order ID to delete the specific order.
@@ -223,7 +192,7 @@ Replace `{id}` with the order ID to delete the specific order.
 curl -X DELETE http://localhost:8085/orders/1
 ```
 
-### 5. **Simulate Payment (PaymentService)**
+### 5. **PaymentService**
 To simulate a payment, change the order status to `paid` using the PaymentService:
 
 ```bash
