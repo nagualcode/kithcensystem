@@ -40,9 +40,8 @@ public class PaymentService {
     // Simulate sending order confirmation email by logging to console
     private void sendOrderEmail(OrderMessage orderMessage) {
         System.out.println("---------------------------------");
-        System.out.println("Sending email to: " + orderMessage.getEmail());
-        System.out.println("Subject: Your Order Details");
-        System.out.println("Message:");
+        System.out.println("EMAIL: " + orderMessage.getEmail());
+        System.out.println("SUBJECT: Your Order Details");
         System.out.println("Hello " + orderMessage.getCustomer() + ",\n\n" +
                 "Thank you for your order. Here are the details:\n" +
                 "Order ID: " + orderMessage.getOrderId() + "\n" +
