@@ -22,7 +22,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.springframework.test.context.ActiveProfiles;
 
-
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
@@ -77,8 +76,7 @@ public class OrderServiceTest {
         assertThat(savedOrder.getCustomerName()).isEqualTo("John Doe");
 
         // Verify that the message was sent to RabbitMQ
-        String expectedMessage = String.format("Order %d status: %s", savedOrder.getId(), savedOrder.getStatus());
-        rabbitTemplate.convertAndSend("order.exchange", "order.routingKey", expectedMessage);
+        assertThat(rabbitTemplate.receiveAndConvert("order.queue")).isNotNull();
     }
 
     @Test
@@ -92,8 +90,7 @@ public class OrderServiceTest {
         assertThat(updatedOrder.getStatus()).isEqualTo("paid");
 
         // Verify that the message was sent to RabbitMQ
-        String expectedMessage = String.format("Order %d status: %s", updatedOrder.getId(), updatedOrder.getStatus());
-        rabbitTemplate.convertAndSend("order.exchange", "order.routingKey", expectedMessage);
+        assertThat(rabbitTemplate.receiveAndConvert("order.queue")).isNotNull();
     }
 
     // Helper method to create a sample order
@@ -112,7 +109,7 @@ public class OrderServiceTest {
 
         Order order = new Order();
         order.setCustomerName("John Doe");
-        order.setCustomerEmail("john.doe@example.com");
+        order.setCustomerEmail("springboot@mailtothis.com");
         order.setStatus("pending");
         order.setOrderItems(orderItems);
         order.setTotalPrice(22.98);

@@ -34,6 +34,9 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+        if (order.getStatus() == null) {
+            order.setStatus("Pending");
+        }
         Order createdOrder = orderService.createOrder(order);
         return ResponseEntity.ok(createdOrder);
     }

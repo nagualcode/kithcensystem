@@ -1,13 +1,13 @@
 package br.nagualcode.paymentservice.service;
 
+import br.nagualcode.paymentservice.model.OrderMessage;
+import br.nagualcode.paymentservice.model.Payment;
+import br.nagualcode.paymentservice.repository.PaymentRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import br.nagualcode.paymentservice.model.OrderMessage;
-import br.nagualcode.paymentservice.model.Payment;
-import br.nagualcode.paymentservice.repository.PaymentRepository;
 
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class PaymentService {
     public void processNewOrder(OrderMessage orderMessage) {
         // Simulate the creation of a payment
         Payment payment = new Payment();
-        payment.setOrderId(orderMessage.getId());
+        payment.setOrderId(orderMessage.getOrderId());
         payment.setStatus("unpaid"); // default status
         paymentRepository.save(payment);
 
@@ -36,14 +36,15 @@ public class PaymentService {
     // Send order confirmation email
     private void sendOrderEmail(OrderMessage orderMessage) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(orderMessage.getCustomerEmail());
+        message.setTo(orderMessage.getEmail());
         message.setSubject("Your Order Details");
-        message.setText("Hello " + orderMessage.getCustomerName() + ",\n\n" +
-                        "Thank you for your order. Here are the details:\n" +
-                        "Order ID: " + orderMessage.getId() + "\n" +
-                        "Total Price: " + orderMessage.getTotalPrice() + "\n\n" +
-                        "Best regards,\n" +
-                        "Kitchen Orders Team");
+        message.setText("Hello " + orderMessage.getCustomer() + ",\n\n" +
+                "Thank you for your order. Here are the details:\n" +
+                "Order ID: " + orderMessage.getOrderId() + "\n" +
+                "Total Price: " + orderMessage.getTotal() + "\n\n" +
+                "You can pay using the following link:\n" +
+                "[PAY LINK],\n" +
+                "Or scan the following PIX QR code for payment.");
 
         mailSender.send(message);
     }
