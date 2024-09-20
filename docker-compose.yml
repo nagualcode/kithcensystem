@@ -6,6 +6,64 @@ services:
     networks:
       - spring-boot-network
 
+  flyway:
+    image: flyway/flyway:9.22.0
+    command: -url=jdbc:postgresql://postgres:5432/test_db -schemas=public -user=postgres -password=password -connectRetries=60 migrate
+    volumes:
+      - ./V1__Create_All_Tables.sql:/flyway/sql/V1__Create_All_Tables.sql
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - spring-boot-network
+
+  paymentservice:
+    build: ./paymentservice
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - eureka-server
+      - postgres
+      - rabbitmq
+      - flyway
+    networks:
+      - spring-boot-network
+
+  menuservice:
+    build: ./menuservice
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+      - flyway
+    networks:
+      - spring-boot-network
+
+  orderservice:
+    build: ./orderservice
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - eureka-server
+      - postgres
+      - rabbitmq
+      - flyway
+    networks:
+      - spring-boot-network
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -35,19 +93,28 @@ services:
     networks:
       - spring-boot-network
 
-  orderservice:
-    build: ./orderservice
+  printservice:
+    build: ./printservice
     ports:
-      - "8085:8085"
+      - "8086:8086"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
       SPRING_RABBITMQ_HOST: rabbitmq
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
-      - postgres
       - rabbitmq
+    networks:
+      - spring-boot-network
+
+  userfronted:
+    build:
+      context: ./userfronted
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
     networks:
       - spring-boot-network
 
@@ -64,7 +131,7 @@ services:
       - rabbitmq
     networks:
       - spring-boot-network
-
+      
 networks:
   spring-boot-network:
     driver: bridge
