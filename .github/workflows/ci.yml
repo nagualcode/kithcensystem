@@ -73,4 +73,3 @@ jobs:
         run: |
           cd printservice
           mvn clean install
-
