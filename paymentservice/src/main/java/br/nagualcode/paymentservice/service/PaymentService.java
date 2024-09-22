@@ -6,7 +6,6 @@ import br.nagualcode.paymentservice.repository.PaymentRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +14,6 @@ import java.util.Optional;
 @Service
 public class PaymentService {
 
-    @Autowired
-    private JavaMailSender mailSender;
 
     @Autowired
     private PaymentRepository paymentRepository;
