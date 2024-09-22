@@ -93,20 +93,6 @@ services:
     networks:
       - spring-boot-network
 
-  printservice:
-    build: ./printservice
-    ports:
-      - "8086:8086"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_RABBITMQ_HOST: rabbitmq
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-    depends_on:
-      - eureka-server
-      - rabbitmq
-    networks:
-      - spring-boot-network
-
   userfronted:
     build:
       context: ./userfronted
