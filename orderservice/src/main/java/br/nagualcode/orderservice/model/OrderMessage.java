@@ -11,11 +11,11 @@ public class OrderMessage {
     private String status;
     private BigDecimal total;
 
-    // No-args constructor for deserialization
+ 
     public OrderMessage() {
     }
 
-    // All-args constructor
+  
     public OrderMessage(Long orderId, String customer, String email, String status, BigDecimal total) {
         this.orderId = orderId;
         this.customer = customer;
@@ -83,7 +83,7 @@ public class OrderMessage {
         return Objects.hash(orderId, customer, email, status, total);
     }
 
-    // toString method for debugging/logging
+
     @Override
     public String toString() {
         return "OrderMessage{" +

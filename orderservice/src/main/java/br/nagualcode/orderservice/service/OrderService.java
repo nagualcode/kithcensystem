@@ -94,9 +94,7 @@ public class OrderService {
         StringBuilder orderDetails = new StringBuilder();
         orderDetails.append("Order ID: ").append(order.getId()).append("\n")
                     .append("Customer Name: ").append(order.getCustomerName()).append("\n")
-                    .append("Customer Email: ").append(order.getCustomerEmail()).append("\n")
-                    .append("Total Price: ").append(order.getTotalPrice()).append("\n")
-                    .append("Items:\n");
+                    .append("Cook:\n");
 
         order.getOrderItems().forEach(item -> 
             orderDetails.append(" - ").append(item.toString()).append("\n")

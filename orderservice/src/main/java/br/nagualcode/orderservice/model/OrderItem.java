@@ -39,4 +39,9 @@ public class OrderItem {
     public void setPlatePrice(Double platePrice) {
         this.platePrice = platePrice;
     }
+    
+    @Override
+    public String toString() {
+        return plateDescription;
+    }
 }

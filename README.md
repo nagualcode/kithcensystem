@@ -1,6 +1,7 @@
 ## KitchenSystem
 
 ![KitchenSystem Logo](logo.png)
+![fluxogram](flux.png)
 
 ### Overview
 
@@ -112,13 +113,36 @@ The `docker-compose.yml` also ensures service dependencies and startup order. Fo
 
 The project uses **JUnit** and **Testcontainers** for comprehensive unit and integration testing. The tests are defined in each microservice's test suite.
 
-#### To Run Tests:
-```bash
-cd {service_directory}
-mvn test
-```
-Tests will spin up the required Testcontainers for PostgreSQL and RabbitMQ and execute in isolated environments.
+### Application Flow
 
+1. The customer places an order -> `OrderService` creates the order and sends a message.
+2. The customer pays -> `PaymentService` processes the payment and updates the status.
+3. The order is paid -> `OrderService` receives the message and sends it to `PrintService`.
+4. `PrintService` prints what needs to be prepared in the kitchen. 
+
+
+### 1. **Order Creation by the Customer** (Microservice `OrderService`)
+   - The **Customer** accesses the interface (via React or another frontend application) and places an order.
+   - An HTTP **POST /orders** request is sent to the `OrderService` microservice.
+   - The **`OrderService`** receives the order, validates the information, and creates a new order record in the database.
+   - The order is initially set with the status "Pending."
+   - A message is generated with the order details, encapsulated in an **`OrderMessage`**, and published to the **RabbitMQ exchange**, using the appropriate routing key to notify other services about the new order.
+
+### 2. **Payment Status Update** (Microservice `PaymentService`)
+   - The `PaymentService` microservice provides an endpoint (/payments/orderID) to process the successful payment of an order.
+   - When the customer makes the payment, the `PaymentService` updates the order status and sends a message to the **order.update.queue** informing about the status change.
+
+### 3. **Updating the Order with Paid Status** (Microservice `OrderService`)
+   - The `OrderService`, via a **RabbitListener**, listens to the order status update queue.
+   - When it receives an update message (e.g., the payment status changes to "paid"), the service retrieves the corresponding order from the database.
+   - The order's status is updated, and if the status is "paid," the order is prepared to be sent to the next stage: the kitchen.
+
+### 4. **Order Preparation in the Kitchen** (Microservice `PrintService`)
+   - After the order's status is updated to "paid," the `OrderService` sends the order to be printed.
+   - A message containing the order details (ID, customer name, order items) is published to the **order.print.queue**.
+   - The **`PrintService`** listens to this queue and simulates printing the order (in this case, just printing the details to the console, though it could be integrated with a physical printer) so that the kitchen can prepare the dishes.
+
+![sequence diagram](sequence.png)
 ---
 
 ### License

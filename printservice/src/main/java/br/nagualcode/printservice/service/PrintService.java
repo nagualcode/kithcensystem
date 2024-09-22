@@ -10,8 +10,8 @@ public class PrintService {
     @RabbitListener(queues = "order.print.queue")
     public void receivePrintMessage(String message) {
         // Simulate printing by printing the message to the console
-        System.out.println("Simulating print job:");
-        System.out.println(message);
-        System.out.println("End of print job.");
+        System.out.println("********************************");
+        System.out.println(message.replace("\\n", "\n"));
+        System.out.println("********************************");
     }
 }
